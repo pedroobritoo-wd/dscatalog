@@ -1,7 +1,6 @@
 package com.devsuperior.dscatalog.services;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +32,15 @@ public class CategoryService {
 				.orElseThrow(()-> new EntityNotFoundException("Entity not found"));
 		CategoryDTO catDTO = new CategoryDTO(cat.getName(), cat.getId());
 		return catDTO;
+	}
+
+	public CategoryDTO createCategory(CategoryDTO cat) {
+		Category category = new Category();
+		category.setName(cat.name());
+		category = repository.save(category);
+		
+		return new CategoryDTO(category.getName(), category.getId());
+		
 	}
 	
 	
