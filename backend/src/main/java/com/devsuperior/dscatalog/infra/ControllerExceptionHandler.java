@@ -8,13 +8,14 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import com.devsuperior.dscatalog.resources.exceptions.StandardError;
-import com.devsuperior.dscatalog.services.exceptions.EntityNotFoundException;
+import com.devsuperior.dscatalog.services.exceptions.DatabaseException;
+import com.devsuperior.dscatalog.services.exceptions.ResourceNotFoundException;
 
 @RestControllerAdvice
 public class ControllerExceptionHandler {
 
-	@ExceptionHandler(EntityNotFoundException.class)
-	public ResponseEntity<StandardError> EntityNotFound(EntityNotFoundException e){
+	@ExceptionHandler(ResourceNotFoundException.class)
+	public ResponseEntity<StandardError> EntityNotFound(ResourceNotFoundException e){
 		StandardError error = new StandardError();
 		error.setTimestamp(Instant.now());
 		error.setStatus(HttpStatus.NOT_FOUND.value());
@@ -23,5 +24,17 @@ public class ControllerExceptionHandler {
 		error.setPath(null);
 		
 		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
+	}
+	
+	@ExceptionHandler(DatabaseException.class)
+	public ResponseEntity<StandardError> dbException(DatabaseException e){
+		StandardError error = new StandardError();
+		error.setTimestamp(Instant.now());
+		error.setStatus(HttpStatus.BAD_REQUEST.value());
+		error.setError("Database exception");
+		error.setMessage(e.getMessage());
+		error.setPath(null);
+		
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
 	}
 }
