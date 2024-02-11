@@ -5,6 +5,8 @@ import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -69,6 +71,14 @@ public class CategoryService {
         	throw new DatabaseException("Falha de integridade referencial");
    	}
 		
+	}
+	
+	
+	public Page<CategoryDTO> findAllPaged(PageRequest pageRequest) {
+		Page<Category> categories = repository.findAll(pageRequest);
+		Page<CategoryDTO> categoriesdtos = categories
+				.map(x -> new CategoryDTO(x.getName(), x.getId()));
+		return categoriesdtos;
 	}
 	
 	
