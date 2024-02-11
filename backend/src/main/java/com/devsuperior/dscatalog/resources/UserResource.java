@@ -24,7 +24,8 @@ import com.devsuperior.dscatalog.dto.UserInsertDTO;
 import com.devsuperior.dscatalog.services.UserService;
 import com.devsuperior.dscatalog.services.exceptions.ResourceNotFoundException;
 
-import jakarta.persistence.EntityNotFoundException; 
+import jakarta.persistence.EntityNotFoundException;
+import jakarta.validation.Valid; 
 
 @RestController
 @RequestMapping(value = "/users")
@@ -46,7 +47,7 @@ public class UserResource {
 	}
 	
 	@PostMapping
-	public ResponseEntity<UserDTO> create(@RequestBody UserInsertDTO userDTO){
+	public ResponseEntity<UserDTO> create(@Valid @RequestBody UserInsertDTO userDTO){
 		UserDTO newUser = service.createUser(userDTO);
 		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
 				.buildAndExpand(newUser.getId()).toUri();

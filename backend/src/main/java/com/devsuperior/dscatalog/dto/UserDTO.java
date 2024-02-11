@@ -6,13 +6,20 @@ import java.util.Set;
 
 import com.devsuperior.dscatalog.domain.User;
 
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+
 public class UserDTO implements Serializable{
 
 	private static final long serialVersionUID = 1L;
 	
 	private Long id;
+	
+	@NotBlank
 	private String firstName;
 	private String lastName;
+	
+	@Email
 	private String email;
 	
 	Set<RoleDTO> roles = new HashSet<>();

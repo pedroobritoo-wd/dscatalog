@@ -4,10 +4,13 @@ import java.time.Instant;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import com.devsuperior.dscatalog.resources.exceptions.StandardError;
+import com.devsuperior.dscatalog.resources.exceptions.ValidationError;
 import com.devsuperior.dscatalog.services.exceptions.DatabaseException;
 import com.devsuperior.dscatalog.services.exceptions.ResourceNotFoundException;
 
@@ -37,4 +40,22 @@ public class ControllerExceptionHandler {
 		
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
 	}
+	
+	@ExceptionHandler(MethodArgumentNotValidException.class)
+	public ResponseEntity<ValidationError> argumentNotValidException(MethodArgumentNotValidException e){
+		ValidationError error = new ValidationError();
+		error.setTimestamp(Instant.now());
+		error.setStatus(HttpStatus.UNPROCESSABLE_ENTITY.value());
+		error.setError("Argument exception");
+		error.setMessage(e.getMessage());
+		error.setPath(null);
+		
+		for(FieldError f : e.getBindingResult().getFieldErrors()) {
+		    error.addError(f.getField(), f.getDefaultMessage());
+		}
+		
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+	}
+	
+	
 }

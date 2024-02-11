@@ -23,7 +23,8 @@ import com.devsuperior.dscatalog.dto.ProductDTO;
 import com.devsuperior.dscatalog.services.ProductService;
 import com.devsuperior.dscatalog.services.exceptions.ResourceNotFoundException;
 
-import jakarta.persistence.EntityNotFoundException; 
+import jakarta.persistence.EntityNotFoundException;
+import jakarta.validation.Valid; 
 
 @RestController
 @RequestMapping(value = "/products")
@@ -45,7 +46,7 @@ public class ProductResource {
 	}
 	
 	@PostMapping
-	public ResponseEntity<ProductDTO> create(@RequestBody ProductDTO cat){
+	public ResponseEntity<ProductDTO> create(@Valid @RequestBody ProductDTO cat){
 		cat = service.createProduct(cat);
 		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
 				.buildAndExpand(cat.getId()).toUri();

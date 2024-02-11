@@ -9,15 +9,27 @@ import java.util.Set;
 import com.devsuperior.dscatalog.domain.Category;
 import com.devsuperior.dscatalog.domain.Product;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.PastOrPresent;
+import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.Size;
+
 public class ProductDTO implements Serializable {
 	
 	private static final long serialVersionUID = 1L;
 	
 	private Long id;
+	
+	@NotBlank
+	@Size(min = 4, message = "Nome necessita ser maior que 4 caracteres")
 	private String name;
 	private String description;
+	
+	@Positive
 	private Double price;
 	private String imgUrl;
+	
+	@PastOrPresent
 	private Instant date;
 	
 	private List<CategoryDTO> categories = new ArrayList<>();
