@@ -55,7 +55,7 @@ public class CategoryResource {
 	public ResponseEntity<CategoryDTO> create(@RequestBody CategoryDTO cat){
 		cat = service.createCategory(cat);
 		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
-				.buildAndExpand(cat.id()).toUri();
+				.buildAndExpand(cat.getId()).toUri();
 		return ResponseEntity.created(uri).body(cat);
 	}
 	
@@ -64,7 +64,7 @@ public class CategoryResource {
 		try {
 			cat = service.updateCategory(cat, id);
 			URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
-					.buildAndExpand(cat.id()).toUri();
+					.buildAndExpand(cat.getId()).toUri();
 			return ResponseEntity.created(uri).body(cat);
 		} catch (EntityNotFoundException e) {
 			throw new ResourceNotFoundException("Id not found "+id);

@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,38 +25,29 @@ public class CategoryService {
 	private CategoryRepository repository;
 	
 	@Transactional(readOnly = true)
-	public List<CategoryDTO> findAll(){
-		List<Category> categories = repository.findAll();
-		List<CategoryDTO> categoriesdtos = categories.stream()
-				.map(x -> new CategoryDTO(x.getName(), x.getId())).collect(Collectors.toList());
-		return categoriesdtos;
-	}
-	
-	@Transactional(readOnly = true)
 	public CategoryDTO findById(Long id) {
 		Category cat = repository.findById(id)
 				.orElseThrow(()-> new ResourceNotFoundException("Entity not found"));
-		CategoryDTO catDTO = new CategoryDTO(cat.getName(), cat.getId());
-		return catDTO;
+		return new CategoryDTO(cat);
 	}
 	
 	@Transactional
 	public CategoryDTO createCategory(CategoryDTO cat) {
 		Category category = new Category();
-		category.setName(cat.name());
+		category.setName(cat.getName());
 		category = repository.save(category);
 		
-		return new CategoryDTO(category.getName(), category.getId());
+		return new CategoryDTO(category);
 		
 	}
 	
 	@Transactional
 	public CategoryDTO updateCategory(CategoryDTO cat, Long id) {
 		Category category = repository.getReferenceById(id);
-		category.setName(cat.name());
+		category.setName(cat.getName());
 		category = repository.save(category);
 		
-		return new CategoryDTO(category.getName(), id);
+		return new CategoryDTO(category);
 		
 	}
 	
@@ -74,11 +66,10 @@ public class CategoryService {
 	}
 	
 	
-	public Page<CategoryDTO> findAllPaged(PageRequest pageRequest) {
-		Page<Category> categories = repository.findAll(pageRequest);
-		Page<CategoryDTO> categoriesdtos = categories
-				.map(x -> new CategoryDTO(x.getName(), x.getId()));
-		return categoriesdtos;
+	@Transactional(readOnly = true)
+	public Page<CategoryDTO> findAllPaged(Pageable pageable) {
+		Page<Category> list = repository.findAll(pageable);
+		return list.map(x -> new CategoryDTO(x));
 	}
 	
 	
