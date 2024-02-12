@@ -9,5 +9,6 @@ import com.devsuperior.dscatalog.domain.User;
 
 @Repository
 public interface RoleRepository extends JpaRepository<Role, Long> {
-
+	
+	Role findByAuthority(String authority);
 }
