@@ -6,8 +6,10 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -34,16 +36,11 @@ public class CategoryResource {
 	private CategoryService service;
 	
 	@GetMapping
-	public ResponseEntity<Page<CategoryDTO>> findAll(
-			@RequestParam(value = "page", defaultValue = "0")int page,
-			@RequestParam(value = "linesPerPage", defaultValue = "12")int linesPerPage,
-			@RequestParam(value = "direction", defaultValue = "ASC")String direction,
-			@RequestParam(value = "orderBy", defaultValue = "name")String orderBy
-			){
-		PageRequest pageRequest = PageRequest.of(page, linesPerPage, Direction.valueOf(direction), orderBy);
-		Page<CategoryDTO> list = service.findAllPaged(pageRequest);
+	public ResponseEntity<List<CategoryDTO>> findAll(){
+		List<CategoryDTO> list = service.findAll();
 		return ResponseEntity.ok().body(list);
 	}
+	
 	
 	@GetMapping(value="/{id}")
 	public ResponseEntity<CategoryDTO> findById(@PathVariable Long id){
@@ -59,6 +56,7 @@ public class CategoryResource {
 		return ResponseEntity.created(uri).body(cat);
 	}
 	
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_OPERATOR')")
 	@PutMapping(value="/{id}")
 	public ResponseEntity<CategoryDTO> update(@RequestBody CategoryDTO cat, @PathVariable Long id){
 		try {
@@ -71,6 +69,7 @@ public class CategoryResource {
 		}
 	}
 	
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_OPERATOR')")
 	@DeleteMapping(value="/{id}")
 	public ResponseEntity<Void> update(@PathVariable Long id){
 		service.deleteCategory(id);
